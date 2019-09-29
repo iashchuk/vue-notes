@@ -8,11 +8,18 @@
           <div class="app__header">
             <h1 class="app__title">{{title}}</h1>
             <Search
-              :value="searchTerm"
               placeholder="Find your note"
+              :searchTerm="searchTerm"
+              @onReset="resetSearch"
               @onChange="searchTerm = $event"
             />
-            <GridButtons :grid="grid" @setGrid="setGrid" />
+            <Priority
+              name="priorityFilter"
+              :activeValue="priorityFilter"
+              :values="priorityFilters"
+              :setValue="setFilter"
+            />
+            <GridButtons :grid="grid" :setGrid="setGrid" />
           </div>
           <Notes :notes="filteredNotes" :grid="grid" @removeNote="removeNote" />
         </div>
@@ -27,6 +34,8 @@ import NewNote from "@/components/NewNote";
 import Notes from "@/components/Notes";
 import Search from "@/components/Search";
 import GridButtons from "@/components/GridButtons";
+import Priority from "@/components/Priority";
+
 import data from "@/mocks";
 import { searchNotes } from "@/helpers/searchNotes";
 
@@ -36,6 +45,7 @@ export default {
     NewNote,
     Notes,
     Search,
+    Priority,
     GridButtons
   },
 
@@ -43,44 +53,68 @@ export default {
     return {
       title: "Notes App",
       searchTerm: "",
+      priorityFilter: "all",
+      priorityFilters: ["all", "low", "medium", "high"],
       message: "",
       grid: "row",
       note: {
         title: "",
-        description: ""
+        description: "",
+        priority: "medium"
       },
       notes: data
     };
   },
   computed: {
     filteredNotes() {
-      return searchNotes(this.notes, this.searchTerm);
+      const filteredNotes =
+        this.priorityFilter === "all"
+          ? this.notes
+          : this.notes.filter(item => item.priority === this.priorityFilter);
+      const searchedNotes = searchNotes(filteredNotes, this.searchTerm);
+      return searchedNotes;
     }
   },
   methods: {
-    addNote() {
-      const { title, description } = this.note;
-
-      if (!title) {
+    addNote(note) {
+      if (!note.title) {
         this.message = "title can't be blanck!";
         return;
       }
 
+      const notesTitles = this.notes.map(item => item.title);
+
+      if (notesTitles.includes(note.title)) {
+        this.message = "note is exist";
+        return;
+      }
+
       const newNote = {
-        title,
-        description,
+        ...note,
         date: new Date(Date.now()).toLocaleString()
       };
 
-      this.message = "";
       this.notes = [...this.notes, newNote];
-      this.note = { title: "", description: "" };
+      this.resetNewNoteInfo();
+      this.resetErrorMessage();
     },
-    removeNote(id) {
-      this.notes = this.notes.filter((item, index) => index !== id);
+    removeNote(title) {
+      this.notes = this.notes.filter(item => item.title !== title);
     },
     setGrid(type) {
       this.grid = type;
+    },
+    setFilter(type) {
+      this.priorityFilter = type;
+    },
+    resetNewNoteInfo() {
+      this.note = { title: "", description: "", priority: "medium" };
+    },
+    resetSearch() {
+      this.searchTerm = "";
+    },
+    resetErrorMessage() {
+      this.message = "";
     }
   }
 };

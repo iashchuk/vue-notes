@@ -19,17 +19,15 @@ export default {
     grid: {
       type: String,
       required: true
-    }
-  },
-  methods: {
-    setGrid(type) {
-      this.$emit("setGrid", type);
+    },
+    setGrid: {
+      type: Function
     }
   }
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .grid__button {
   width: 24px;
   height: 24px;

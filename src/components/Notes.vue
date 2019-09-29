@@ -7,7 +7,8 @@
       :title="note.title"
       :description="note.description"
       :date="note.date"
-      @removeNote="removeNote(index)"
+      :priority="note.priority"
+      @removeNote="removeNote(note.title)"
     />
   </div>
 </template>

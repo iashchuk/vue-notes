@@ -2,17 +2,36 @@
   <div class="note" :class="{note__full: grid === 'column'}">
     <div class="note__header">
       <p class="note__title">{{title}}</p>
-      <span class="note__remove" @click="removeNote">X</span>
+      <CloseButton class="note__remove" :onClick="removeNote" />
     </div>
     <div class="note__body">
       <p class="note__description">{{description}}</p>
+    </div>
+    <div class="note__footer">
       <span class="note__date">{{date}}</span>
+      <span class="note__priority">{{ priorityIcon}}</span>
     </div>
   </div>
 </template>
 
 <script>
+import CloseButton from "@/components/CloseButton";
+
+const PriorityMap = {
+  low: "!",
+  medium: "!!",
+  high: "!!!"
+};
+
 export default {
+  components: {
+    CloseButton
+  },
+  computed: {
+    priorityIcon() {
+      return PriorityMap[this.priority];
+    }
+  },
   props: {
     title: {
       type: String,
@@ -23,6 +42,10 @@ export default {
       required: true
     },
     date: {
+      type: String,
+      required: true
+    },
+    priority: {
       type: String,
       required: true
     },
@@ -71,6 +94,11 @@ export default {
   align-items: center;
 }
 
+.note__footer {
+  display: flex;
+  justify-content: space-between;
+}
+
 .note__title {
   margin: 20px 0;
   color: #402caf;
@@ -95,5 +123,10 @@ export default {
 .note__date {
   font-size: 14px;
   color: #999;
+}
+
+.note__priority {
+  font-weight: 600;
+  color: tomato;
 }
 </style>

@@ -1,11 +1,19 @@
 <template>
-  <input class="search" type="text" :placeholder="placeholder" v-model="term" />
+  <div class="search">
+    <input v-model="term" class="search__input" type="text" :placeholder="placeholder" />
+    <CloseButton v-if="term" class="search__reset" :onClick="resetTerm" />
+  </div>
 </template>
 
 <script>
+import CloseButton from "@/components/CloseButton";
+
 export default {
+  components: {
+    CloseButton
+  },
   props: {
-    value: {
+    searchTerm: {
       type: String,
       required: true
     },
@@ -16,12 +24,18 @@ export default {
   },
   data() {
     return {
-      term: this.value
+      term: this.searchTerm
     };
   },
   watch: {
-    term(event) {
-      this.$emit("onChange", event);
+    term(value) {
+      this.$emit("onChange", value);
+    }
+  },
+  methods: {
+    resetTerm() {
+      this.term = "";
+      this.$emit("onReset");
     }
   }
 };
@@ -29,6 +43,9 @@ export default {
 
 <style scoped>
 .search {
+  position: relative;
+}
+.search__input {
   width: 400px;
   padding: 16px 16px 16px 56px;
   margin-bottom: 0px;
@@ -39,6 +56,14 @@ export default {
   background-position: 20px center;
   background-image: url("../assets/img/icon_search.svg");
   background-repeat: no-repeat;
+}
+
+.search__reset {
+  position: absolute;
+  top: 19px;
+  right: 16px;
+  width: 15px;
+  height: 15px;
 }
 </style>
 
