@@ -5,7 +5,7 @@
       <span class="note__remove" @click="removeNote">X</span>
     </div>
     <div class="note__body">
-      <p class="note__description">{{descr}}</p>
+      <p class="note__description">{{description}}</p>
       <span class="note__date">{{date}}</span>
     </div>
   </div>
@@ -18,7 +18,7 @@ export default {
       type: String,
       required: true
     },
-    descr: {
+    description: {
       type: String,
       required: true
     },

@@ -9,8 +9,7 @@ export default {
   props: {
     text: {
       type: String,
-      required: true,
-      default: "field can't be blank"
+      required: true
     }
   }
 };
@@ -23,6 +22,9 @@ export default {
 }
 
 .message__text {
+  min-height: 16px;
+  font-size: 14px;
+  line-height: 16px;
   color: #ba3838;
 }
 </style>

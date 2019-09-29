@@ -5,7 +5,7 @@
       :key="index"
       :grid="grid"
       :title="note.title"
-      :descr="note.descr"
+      :description="note.description"
       :date="note.date"
       @removeNote="removeNote(index)"
     />
