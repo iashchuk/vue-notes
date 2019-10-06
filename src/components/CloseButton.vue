@@ -1,11 +1,11 @@
 <template>
-  <button class="close" type="button" @click="onClick"></button>
+  <button class="close" type="button" @click="click"></button>
 </template>
 
 <script>
 export default {
   props: {
-    onClick: {
+    click: {
       type: Function,
       required: true
     }
@@ -22,10 +22,12 @@ export default {
   background: none;
   border: none;
   cursor: pointer;
+   transition: 0.3s;
 
   &:hover {
     &::before,
     &::after {
+         transition: 0.3s;
       background-color: tomato;
     }
   }

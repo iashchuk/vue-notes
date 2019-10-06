@@ -1,14 +1,29 @@
 <template>
-  <div class="note" :class="{note__full: grid === 'column'}">
+  <div class="note" v-click-outside="closeEdit" :class="{note__full: grid === 'column'}">
     <div class="note__header">
-      <p class="note__title">{{title}}</p>
-      <CloseButton class="note__remove" :onClick="removeNote" />
+      <input
+        type="text"
+        class="note__title"
+        :class="{note__title_editing: isEditing}"
+        :disabled="!isEditing"
+        :value="note.title"
+        @input="title = $event.target.value"
+      />
+      <EditButton class="note__edit" :isEditing="isEditing" :click="handleEditButton" />
+      <CloseButton class="note__remove" :click="removeNote" />
     </div>
     <div class="note__body">
-      <p class="note__description">{{description}}</p>
+      <textarea
+        class="note__description"
+        :class="{note__description_editing: isEditing}"
+        type="text"
+        :disabled="!isEditing"
+        :value="note.description"
+        @input="description = $event.target.value"
+      />
     </div>
     <div class="note__footer">
-      <span class="note__date">{{date}}</span>
+      <span class="note__date">{{note.date}}</span>
       <span class="note__priority">{{ priorityIcon}}</span>
     </div>
   </div>
@@ -16,6 +31,7 @@
 
 <script>
 import CloseButton from "@/components/CloseButton";
+import EditButton from "@/components/EditButton";
 
 const PriorityMap = {
   low: "!",
@@ -25,28 +41,12 @@ const PriorityMap = {
 
 export default {
   components: {
-    CloseButton
-  },
-  computed: {
-    priorityIcon() {
-      return PriorityMap[this.priority];
-    }
+    CloseButton,
+    EditButton
   },
   props: {
-    title: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    },
-    date: {
-      type: String,
-      required: true
-    },
-    priority: {
-      type: String,
+    note: {
+      type: Object,
       required: true
     },
     grid: {
@@ -54,9 +54,44 @@ export default {
       required: true
     }
   },
+  mounted() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  },
+  data() {
+    return {
+      isEditing: false,
+      title: this.note.title,
+      description: this.note.description
+    };
+  },
+  computed: {
+    priorityIcon() {
+      return PriorityMap[this.note.priority];
+    }
+  },
   methods: {
+    closeEdit() {
+      this.isEditing = false;
+    },
+    editNote() {
+      this.$emit("editNote", this.title, this.description, this.note.id);
+    },
     removeNote() {
       this.$emit("removeNote");
+    },
+    handleKeyDown(evt) {
+      if (evt.code === "Escape") {
+        this.closeEdit();
+      }
+    },
+    handleEditButton() {
+      if (this.isEditing) {
+        this.editNote();
+      }
+      this.isEditing = !this.isEditing;
     }
   }
 };
@@ -101,14 +136,24 @@ export default {
 
 .note__title {
   margin: 20px 0;
+  padding: 3px 10px;
   color: #402caf;
   font-size: 22px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background-color: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note__title_editing {
+  border: 1px solid #dcdfe6;
 }
 
 .note__remove {
   font-weight: 600;
   font-size: 20px;
-  margin-left: 10px;
+  margin-left: 5px;
   cursor: pointer;
 
   &:hover {
@@ -116,8 +161,21 @@ export default {
   }
 }
 
+.note__edit {
+  margin-left: 10px;
+}
+
 .note__description {
+  height: 100px;
   margin: 20px 0;
+  padding: 3px 10px;
+  border-radius: 0;
+  border: 1px solid transparent;
+  background-color: transparent;
+}
+
+.note__description_editing {
+  border: 1px solid #dcdfe6;
 }
 
 .note__date {

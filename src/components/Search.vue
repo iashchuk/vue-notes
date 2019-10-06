@@ -29,13 +29,13 @@ export default {
   },
   watch: {
     term(value) {
-      this.$emit("onChange", value);
+      this.$emit("change", value);
     }
   },
   methods: {
     resetTerm() {
       this.term = "";
-      this.$emit("onReset");
+      this.$emit("reset");
     }
   }
 };

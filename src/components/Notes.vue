@@ -1,14 +1,12 @@
 <template>
   <div class="notes">
     <Note
-      v-for="(note, index) in notes"
-      :key="index"
+      v-for="note in notes"
+      :key="note.id"
       :grid="grid"
-      :title="note.title"
-      :description="note.description"
-      :date="note.date"
-      :priority="note.priority"
-      @removeNote="removeNote(note.title)"
+      :note="note"
+      @editNote="editNote"
+      @removeNote="removeNote(note.id)"
     />
   </div>
 </template>
@@ -33,6 +31,9 @@ export default {
   methods: {
     removeNote(id) {
       this.$emit("removeNote", id);
+    },
+    editNote(title, description, id) {
+      this.$emit("editNote", title, description, id);
     }
   }
 };

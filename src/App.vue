@@ -10,8 +10,8 @@
             <Search
               placeholder="Find your note"
               :searchTerm="searchTerm"
-              @onReset="resetSearch"
-              @onChange="searchTerm = $event"
+              @reset="resetSearch"
+              @change="searchTerm = $event"
             />
             <Priority
               name="priorityFilter"
@@ -21,7 +21,7 @@
             />
             <GridButtons :grid="grid" :setGrid="setGrid" />
           </div>
-          <Notes :notes="filteredNotes" :grid="grid" @removeNote="removeNote" />
+          <Notes :notes="filteredNotes" :grid="grid" @removeNote="removeNote" @editNote="editNote" />
         </div>
       </section>
     </div>
@@ -37,7 +37,7 @@ import GridButtons from "@/components/GridButtons";
 import Priority from "@/components/Priority";
 
 import data from "@/mocks";
-import { searchNotes } from "@/helpers/searchNotes";
+import { getUniqueId, replaceElement, searchNotes } from "@/helpers";
 
 export default {
   components: {
@@ -91,6 +91,7 @@ export default {
 
       const newNote = {
         ...note,
+        id: getUniqueId(),
         date: new Date(Date.now()).toLocaleString()
       };
 
@@ -98,8 +99,8 @@ export default {
       this.resetNewNoteInfo();
       this.resetErrorMessage();
     },
-    removeNote(title) {
-      this.notes = this.notes.filter(item => item.title !== title);
+    removeNote(id) {
+      this.notes = this.notes.filter(item => item.id !== id);
     },
     setGrid(type) {
       this.grid = type;
@@ -115,6 +116,21 @@ export default {
     },
     resetErrorMessage() {
       this.message = "";
+    },
+    editNote(title, description, id) {
+      const noteForUpdate = this.notes.find(item => item.id === id);
+
+      if (!noteForUpdate) {
+        return;
+      }
+
+      const updatedNote = {
+        ...noteForUpdate,
+        title,
+        description,
+        date: new Date(Date.now()).toLocaleString()
+      };
+      this.notes = replaceElement(updatedNote, this.notes);
     }
   }
 };
