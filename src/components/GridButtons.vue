@@ -14,15 +14,16 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
-  props: {
-    grid: {
-      type: String,
-      required: true
-    },
-    setGrid: {
-      type: Function
-    }
+  computed: {
+    ...mapState({
+      grid: state => state.ui.grid
+    })
+  },
+  methods: {
+    ...mapActions(["setGrid"])
   }
 };
 </script>

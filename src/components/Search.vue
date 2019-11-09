@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <input v-model="term" class="search__input" type="text" :placeholder="placeholder" />
-    <CloseButton v-if="term" class="search__reset" :onClick="resetTerm" />
+    <CloseButton v-if="term" class="search__reset" @click="resetTerm" />
   </div>
 </template>
 
@@ -13,10 +13,6 @@ export default {
     CloseButton
   },
   props: {
-    searchTerm: {
-      type: String,
-      required: true
-    },
     placeholder: {
       type: String,
       default: "Search"
@@ -24,7 +20,7 @@ export default {
   },
   data() {
     return {
-      term: this.searchTerm
+      term: ""
     };
   },
   watch: {
@@ -35,7 +31,6 @@ export default {
   methods: {
     resetTerm() {
       this.term = "";
-      this.$emit("reset");
     }
   }
 };

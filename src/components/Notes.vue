@@ -1,40 +1,30 @@
 <template>
-  <div class="notes">
-    <Note
-      v-for="note in notes"
-      :key="note.id"
-      :grid="grid"
-      :note="note"
-      @editNote="editNote"
-      @removeNote="removeNote(note.id)"
-    />
+  <div v-if="loading" class="loading">
+    <h2>Загрузка...</h2>
+  </div>
+  <div v-else class="notes">
+    <Note v-for="note in notes" :key="note.id" :note="note" />
   </div>
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
 import Note from "@/components/Note";
 
 export default {
   components: {
     Note
   },
-  props: {
-    notes: {
-      type: Array,
-      required: true
-    },
-    grid: {
-      type: String,
-      required: true
-    }
+  created() {
+    this.$store.dispatch("getNotesAsync");
   },
-  methods: {
-    removeNote(id) {
-      this.$emit("removeNote", id);
-    },
-    editNote(title, description, id) {
-      this.$emit("editNote", title, description, id);
-    }
+  computed: {
+    ...mapGetters({
+      notes: "getNotes"
+    }),
+    ...mapState({
+      loading: state => state.ui.loading
+    })
   }
 };
 </script>
@@ -45,5 +35,12 @@ export default {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 40px 0;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 220px;
 }
 </style>

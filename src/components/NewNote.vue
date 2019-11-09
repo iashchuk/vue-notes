@@ -1,12 +1,13 @@
 <template>
   <div class="new">
+    <Message :text="errorMessage" />
     <div class="new__field">
       <label for="new-input">Title</label>
-      <input v-model="note.title" id="new-input" type="text" />
+      <input v-model="title" id="new-input" type="text" />
     </div>
     <div class="new__field">
       <label for="new-textarea">Description</label>
-      <textarea v-model="note.description" id="new-textarea"></textarea>
+      <textarea v-model="description" id="new-textarea"></textarea>
     </div>
     <Priority
       class="new__priority"
@@ -15,36 +16,69 @@
       :values="priorityValues"
       :setValue="setPriority"
     />
-    <button class="new__button btn btnPrimary" @click="addNote">New note</button>
+    <button class="new__button btn btnPrimary" @click="createNote">New note</button>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import Priority from "@/components/Priority";
+import Message from "@/components/Message";
+import { getUniqueId, PriorityFilters } from "@/helpers";
 
 export default {
   components: {
+    Message,
     Priority
-  },
-  props: {
-    note: {
-      type: Object,
-      required: true
-    }
   },
   data() {
     return {
-      priority: this.note.priority,
-      priorityValues: ["low", "medium", "high"]
+      title: "",
+      description: "",
+      priority: PriorityFilters.MEDIUM,
+      priorityValues: [
+        PriorityFilters.LOW,
+        PriorityFilters.MEDIUM,
+        PriorityFilters.HIGH
+      ],
+      errorMessage: ""
     };
   },
   methods: {
-    addNote() {
-      this.$emit("addNote", { ...this.note, priority: this.priority });
-      this.priority = "medium";
+    ...mapActions(["addNote"]),
+    createNote() {
+      if (!this.title) {
+        this.errorMessage = "title can't be blanck!";
+        return;
+      }
+
+      if (!this.description) {
+        this.errorMessage = "description can't be blanck!";
+        return;
+      }
+
+      const newNote = {
+        id: getUniqueId(),
+        title: this.title,
+        description: this.description,
+        priority: this.priority,
+        date: new Date(Date.now()).toLocaleString()
+      };
+
+      this.addNote(newNote);
+      this.resetNewNoteInfo();
+      this.resetErrorMessage();
     },
     setPriority(value) {
       this.priority = value;
+    },
+    resetNewNoteInfo() {
+      this.title = "";
+      this.description = "";
+      this.priority = PriorityFilters.MEDIUM;
+    },
+    resetErrorMessage() {
+      this.errorMessage = "";
     }
   }
 };

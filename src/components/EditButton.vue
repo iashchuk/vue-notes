@@ -11,9 +11,11 @@ export default {
     isEditing: {
       type: Boolean,
       required: true
-    },
-    click: {
-      type: Function
+    }
+  },
+  methods: {
+    click() {
+      this.$emit("click");
     }
   }
 };
