@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <input v-model="term" class="search__input" type="text" :placeholder="placeholder" />
-    <CloseButton v-if="term" class="search__reset" :click="resetTerm" />
+    <CloseButton v-if="term" class="search__reset" @click="resetTerm" />
   </div>
 </template>
 
