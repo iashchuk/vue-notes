@@ -6,11 +6,10 @@
         class="note__title"
         :class="{note__title_editing: isEditing}"
         :disabled="!isEditing"
-        :value="note.title"
-        @input="title = $event.target.value"
+        v-model="title"
       />
-      <EditButton class="note__edit" :isEditing="isEditing" :click="handleEditButton" />
-      <CloseButton class="note__remove" :click="removeNote" />
+      <EditButton class="note__edit" :isEditing="isEditing" @click="handleEditButton" />
+      <CloseButton class="note__remove" @click="removeNote(note.id)" />
     </div>
     <div class="note__body">
       <textarea
@@ -18,8 +17,7 @@
         :class="{note__description_editing: isEditing}"
         type="text"
         :disabled="!isEditing"
-        :value="note.description"
-        @input="description = $event.target.value"
+        v-model="description"
       />
     </div>
     <div class="note__footer">
@@ -30,6 +28,8 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 import CloseButton from "@/components/CloseButton";
 import EditButton from "@/components/EditButton";
 
@@ -48,10 +48,6 @@ export default {
     note: {
       type: Object,
       required: true
-    },
-    grid: {
-      type: String,
-      required: true
     }
   },
   mounted() {
@@ -68,19 +64,28 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      grid: state => state.ui.grid
+    }),
     priorityIcon() {
       return PriorityMap[this.note.priority];
     }
   },
   methods: {
+    ...mapActions(["removeNote", "updateNote"]),
+
     closeEdit() {
       this.isEditing = false;
     },
     editNote() {
-      this.$emit("editNote", this.title, this.description, this.note.id);
-    },
-    removeNote() {
-      this.$emit("removeNote");
+      const updatedNote = {
+        ...this.note,
+        title: this.title,
+        description: this.description,
+        date: new Date(Date.now()).toLocaleString()
+      };
+
+      this.updateNote(updatedNote);
     },
     handleKeyDown(evt) {
       if (evt.code === "Escape") {

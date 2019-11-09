@@ -4,10 +4,9 @@
 
 <script>
 export default {
-  props: {
-    click: {
-      type: Function,
-      required: true
+  methods: {
+    click() {
+      this.$emit("click");
     }
   }
 };
@@ -22,12 +21,12 @@ export default {
   background: none;
   border: none;
   cursor: pointer;
-   transition: 0.3s;
+  transition: 0.3s;
 
   &:hover {
     &::before,
     &::after {
-         transition: 0.3s;
+      transition: 0.3s;
       background-color: tomato;
     }
   }
