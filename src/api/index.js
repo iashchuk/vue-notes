@@ -1,6 +1,6 @@
 import { getUniqueId } from "../helpers";
 
-export default [
+const _notes = [
     {
         id: getUniqueId(),
         title: "First Note",
@@ -23,3 +23,12 @@ export default [
         priority: "low"
     }
 ];
+
+export default {
+    notes() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => resolve(_notes), 2000);
+            setTimeout(() => reject(new Error("Server error")), 5000);
+        });
+    }
+};
