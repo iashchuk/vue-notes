@@ -15,6 +15,12 @@
             />
             <GridButtons />
           </div>
+          <p class="app__text">
+            Quanity of notes:
+            <span
+              class="app__count"
+            >{{notesQuantity.filtered}}/ {{notesQuantity.common}}</span>
+          </p>
           <Notes />
         </div>
       </section>
@@ -23,7 +29,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 import NewNote from "@/components/NewNote";
 import Notes from "@/components/Notes";
@@ -50,6 +56,9 @@ export default {
     ...mapState({
       title: state => state.ui.title,
       priorityFilter: state => state.notes.priorityFilter
+    }),
+    ...mapGetters({
+      notesQuantity: "getNotesQuantity"
     })
   },
   methods: {
@@ -67,5 +76,16 @@ export default {
 
 .app__title {
   font-weight: 600;
+}
+
+.app__text {
+  padding-top: 25px;
+  padding-bottom: 10px;
+  text-align: right;
+}
+
+.app__count {
+  display: inline-block;
+  min-width: 50px;
 }
 </style>

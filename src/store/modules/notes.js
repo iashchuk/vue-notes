@@ -15,7 +15,7 @@ export default {
         priorityFilter: PriorityFilters.ALL
     },
     actions: {
-        async getNotesAsync({ dispatch, commit }) {
+        async fetchNotesAsync({ dispatch, commit }) {
             try {
                 dispatch("startLoading");
                 dispatch("fillNotes", await api.notes());
@@ -74,6 +74,12 @@ export default {
             const searchedNotes = searchNotes(filteredNotes, state.searchFilter);
 
             return searchedNotes;
+        },
+        getNotesQuantity(state, getters) {
+            return {
+                common: state.notes.length,
+                filtered: getters.getNotes.length
+            };
         }
     }
 };

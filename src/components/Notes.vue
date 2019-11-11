@@ -8,15 +8,15 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import Note from "@/components/Note";
 
 export default {
   components: {
     Note
   },
-  created() {
-    this.$store.dispatch("getNotesAsync");
+  mounted() {
+    this.fetchNotesAsync();
   },
   computed: {
     ...mapGetters({
@@ -25,6 +25,9 @@ export default {
     ...mapState({
       loading: state => state.ui.loading
     })
+  },
+  methods: {
+    ...mapActions(["fetchNotesAsync"])
   }
 };
 </script>
@@ -34,7 +37,6 @@ export default {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: 40px 0;
 }
 
 .loading {
